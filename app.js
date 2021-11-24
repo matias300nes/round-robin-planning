@@ -79,44 +79,54 @@ function planRoundRobin(quantum) {
     while (notFinished.length > 0) {
         
         arrived = notFinished.filter(p => p.arrival_time <= current_time)
-        //sort processes by arrival time
-        if (i < arrived.length - 1) {
-            i++
+
+        if (arrived.length == 0){
+            //if there are no arrived processes, avance current time
+            planning.push({
+                name:"",
+                color:"white"
+            })
+            current_time++
         }else{
-            i=0
-        }
-
-        timeToProcess = arrived[i].temp
-        processIndex = notFinished.indexOf(arrived[i])
-
-        //process the first process arrived
-        if (notFinished[processIndex].start_time == null) {
-            notFinished[processIndex].start_time = current_time
-        }
-        if (arrived[i].temp < quantum) {
-            for (let j = 0; j < timeToProcess; j++) {
-                notFinished[processIndex].temp--
-                current_time++
-                planning.push({
-                    name:arrived[i].process,
-                    color:arrived[i].color
-                })
+            //sort processes by arrival time
+            if (i < arrived.length - 1) {
+                i++
+            }else{
+                i=0
             }
-        }else{
-            for (let j = 0; j < quantum; j++) {
-                notFinished[processIndex].temp--
-                current_time++
-                planning.push({
-                    name:arrived[i].process,
-                    color:arrived[i].color
-                })
-            }
-        }
 
-        if(arrived[i].temp <= 0){
-            i--
-            notFinished[processIndex].end_time = current_time
-            notFinished.splice(processIndex, 1)
+            timeToProcess = arrived[i].temp
+            processIndex = notFinished.indexOf(arrived[i])
+
+            //process the first process arrived
+            if (notFinished[processIndex].start_time == null) {
+                notFinished[processIndex].start_time = current_time
+            }
+            if (arrived[i].temp < quantum) {
+                for (let j = 0; j < timeToProcess; j++) {
+                    notFinished[processIndex].temp--
+                    current_time++
+                    planning.push({
+                        name:arrived[i].process,
+                        color:arrived[i].color
+                    })
+                }
+            }else{
+                for (let j = 0; j < quantum; j++) {
+                    notFinished[processIndex].temp--
+                    current_time++
+                    planning.push({
+                        name:arrived[i].process,
+                        color:arrived[i].color
+                    })
+                }
+            }
+
+            if(arrived[i].temp <= 0){
+                i--
+                notFinished[processIndex].end_time = current_time
+                notFinished.splice(processIndex, 1)
+            }
         }
     }
     return planning
